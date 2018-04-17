@@ -1,0 +1,32 @@
+.pointer{
+    cursor: pointer;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+    background-color: #4288CA;
+    color: #FFFFFF;
+}
+
+a:focus{
+    background: #4288CA;
+    color: #FFFFFF; 
+    border-radius: 5px;
+}
+.colDe {
+	width: 20%;
+}
+
+.colA {
+	width: 15%;
+}
+
+.colObjet {
+	width: 45%;
+}
+
+.colDate {
+	width: 15%;
+}
+.surbrillanceRecherche{
+    background-color: #FFD42A;
+}

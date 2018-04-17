@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="./css/style.css">
+</head>
+<body ng-app="Webmail" ng-controller="WebmailCtrl">
+    <div class="container">
+        <div class="row justify-content-between">
+            <ul class="nav justify-content-start my-4">
+                <li class="nav-item rounded pointer" ng-repeat="dossier in dossiers" ng-class="{ actives : vueCourante == 'vueDossier' && dossier == dossierCourant }">
+                    <a href="#/{{dossier.value}}" class="nav-link" ng-click="selectionDossier(dossier)">{{dossier.label}}</a>
+                </li>
+            </ul>
+            <ul class="nav justify-content-end my-4">
+                <li ng-class="{ actives : vueCourante == 'vueNouveauMail' }" class="nav-item rounded pointer">
+                    <a href="#/nouveauMail" class="nav-link"><i class="fas fa-pencil-alt"></i></a>
+                </li>
+            </ul>
+
+        </div>  
+    </div>   
+    <div class="container-fluid bg-light">
+        <div class="container py-2">
+            <div ng-show="vueCourante == 'vueDossier'">
+                <div class="input-group my-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control" ng-model="recherche">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" ng-click="inputRez()" type="btn-default"><i class="far fa-times-circle"></i></button>
+                    </div>
+                </div>
+                <table class="table table-sm table-hover table-striped mb-4">
+                    <thead>
+                        <tr>
+                            <th class="colDe">
+                                <a class="pointer" ng-click="triEmails('from')">De</a> 
+                                <span ng-show="champTri == 'from'" ng-class="cssChevronsTri('from')" ng-bind-html="icon"></span>
+                            </th>
+                            <th class="colA">
+                                <a class="pointer" ng-click="triEmails('to')">&Agrave;</a>
+                                <span ng-show="champTri == 'to'" ng-class="cssChevronsTri('to')" ng-bind-html="icon"></span>
+                            </th>
+                            <th class="colObjet">
+                                <a class="pointer" ng-click="triEmails('subject')">subject</a>
+                                <span ng-show="champTri == 'subject'" ng-class="cssChevronsTri('subject')" ng-bind-html="icon"></span>
+                            </th>
+                            <th class="colDate">
+                                <a class="pointer" ng-click="triEmails('date')">date</a>
+                                <span ng-show="champTri == 'date'" ng-class="cssChevronsTri('date')" ng-bind-html="icon"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="email in emailsFiltres = (dossierCourant.emails | filter: recherche) | orderBy:champTri:triDesc" class="pointer" ng-click="versEmail(dossierCourant,email)">
+                            <td ng-bind-html="email.from | surbrillanceRecherche : recherche"></td>
+                            <td ng-bind-html="email.to | surbrillanceRecherche : recherche"></td>
+                            <td ng-bind-html="email.subject | surbrillanceRecherche : recherche"></td>
+                            <td >{{email.date | date:'dd/MM/yyyy HH:mm'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-info">
+                    Le dossier contient {{ emailsFiltres.length }} mails.
+                </div>
+            </div>
+            <contenu-mail ng-show="vueCourante == 'vueContenuMail'" email="emailSelectionne"></contenu-mail>
+            <nouveau-mail ng-show="vueCourante == 'vueNouveauMail'" class="row justify-content-start" envoi-mail="envoiMail(nouveauMail)"></nouveau-mail>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="./lib/tinymce/tinymce.min.js"></script>    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.2.29/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="http://code.angularjs.org/1.6.9/i18n/angular-locale_fr-fr.js"></script>
+    <script type="text/javascript" src="./lib/ui-tinymce.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/MesFiltres.js"></script>
+    <script type="text/javascript" src="js/MesDirectives.js"></script>
+    <script type="text/javascript" src="js/MailServiceMock.js"></script>
+</body>
+</html>
